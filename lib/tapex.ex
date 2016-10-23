@@ -93,7 +93,7 @@ defmodule Tapex do
 
   defp format_tap(%TestCase{}=case, number) do
     {directive, directive_message} = get_directive(case)
-    format_test(
+    format_tap(
       (case.state == nil || case.state == :skipped),
       number,
       case.name,
@@ -105,7 +105,7 @@ defmodule Tapex do
 
   defp format_tap(%Test{}=test, number) do
     {directive, directive_message} = get_directive(test)
-    format_test(
+    format_tap(
       (test.state == nil || test.state == :skipped),
       number,
       test.case,
@@ -131,33 +131,33 @@ defmodule Tapex do
     end
   end
 
-  defp format_test(true), do: "ok"
-  defp format_test(false), do: "not ok"
+  defp format_tap(true), do: "ok"
+  defp format_tap(false), do: "not ok"
 
-  defp format_test(ok, nil), do: format_test(ok)
-  defp format_test(ok, num), do: format_test(ok) <> " #{num}"
+  defp format_tap(ok, nil), do: format_tap(ok)
+  defp format_tap(ok, num), do: format_tap(ok) <> " #{num}"
 
-  defp format_test(ok, num, nil), do: format_test(ok, num)
-  defp format_test(ok, num, msg), do: format_test(ok, num) <> " #{msg}"
+  defp format_tap(ok, num, nil), do: format_tap(ok, num)
+  defp format_tap(ok, num, msg), do: format_tap(ok, num) <> " #{msg}"
 
-  defp format_test(ok, num, nil, test), do: format_test(ok, num, test)
-  defp format_test(ok, num, kase, nil), do: format_test(ok, num, kase)
-  defp format_test(ok, num, kase, test), do: format_test(ok, num, "#{kase}: #{test}")
+  defp format_tap(ok, num, nil, test), do: format_tap(ok, num, test)
+  defp format_tap(ok, num, kase, nil), do: format_tap(ok, num, kase)
+  defp format_tap(ok, num, kase, test), do: format_tap(ok, num, "#{kase}: #{test}")
 
-  defp format_test(ok, num, kase, test, nil) do
-    format_test(ok, num, kase, test)
+  defp format_tap(ok, num, kase, test, nil) do
+    format_tap(ok, num, kase, test)
   end
-  defp format_test(ok, num, kase, test, directive) do
-    format_test(ok, num, kase, test) <> " ##{directive}"
+  defp format_tap(ok, num, kase, test, directive) do
+    format_tap(ok, num, kase, test) <> " ##{directive}"
   end
 
-  defp format_test(ok, num, kase, test, directive, nil) do
-    format_test(ok, num, kase, test, directive)
+  defp format_tap(ok, num, kase, test, directive, nil) do
+    format_tap(ok, num, kase, test, directive)
   end
-  defp format_test(ok, num, kase, test, directive, false) do
-    format_test(ok, num, kase, test, nil)
+  defp format_tap(ok, num, kase, test, directive, false) do
+    format_tap(ok, num, kase, test, nil)
   end
-  defp format_test(ok, num, kase, test, directive, directive_message) do
-    format_test(ok, num, kase, test, directive) <> " #{directive_message}"
+  defp format_tap(ok, num, kase, test, directive, directive_message) do
+    format_tap(ok, num, kase, test, directive) <> " #{directive_message}"
   end
 end
