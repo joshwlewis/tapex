@@ -3,6 +3,7 @@ defmodule Tapex do
   use GenEvent
 
   alias ExUnit.{Formatter, Test, TestCase}
+  alias Tapex.Tap
 
   def init(opts) do
     print_filters(Keyword.get(opts, :include, []), :include)
@@ -18,13 +19,13 @@ defmodule Tapex do
       test_count: 0,
     }
 
-    IO.puts("TAP version 13")
+    Tap.format_header |> IO.puts
 
     {:ok, config}
   end
 
   def handle_event({:suite_started, opts}, config) do
-    print_plan(Dict.get(opts, :max_cases))
+    Tap.format_plan(Dict.get(opts, :max_cases)) |> IO.puts
     {:ok, config}
   end
 
@@ -33,15 +34,16 @@ defmodule Tapex do
     :remove_handler
   end
 
-  def handle_event({:test_finished, %Test{}=test}, config) do
-    config = increment_counters(config, test)
-    format_line(test, Map.get(config, :test_count)) |> IO.puts
+  def handle_event({:test_finished, test}, %{colors: [enabled: colorize]}=config) do
+    %{test_count: number} = config = increment_counters(config, test)
+    format_tap(test, number, colorize) |> IO.puts
     {:ok, config}
   end
 
-  def handle_event({:case_finished, case}, config) do
-    config = increment_counters(config, case)
-    format_line(case, Map.get(config, :test_count)) |> IO.puts
+
+  def handle_event({:case_finished, case}, %{colors: [enabled: colorize]}=config) do
+    %{test_count: number} = config = increment_counters(config, case)
+    format_tap(case, number, colorize) |> IO.puts
     {:ok, config}
   end
 
@@ -96,62 +98,30 @@ defmodule Tapex do
     IO.puts "1..#{count + 1}"
   end
 
-  defp format_line(true), do: "ok"
-  defp format_line(false), do: "not ok"
-
-  defp format_line(%TestCase{}=case, number) do
+  defp format_tap(%TestCase{}=case, number, colorize) do
     {directive, directive_message} = get_directive(case)
-    format_line(
+    Tap.format_line(
       ok?(case),
       number,
       case.name,
       nil,
       directive,
-      directive_message
+      directive_message,
+      colorize
     )
   end
 
-  defp format_line(%Test{}=test, number) do
+  defp format_tap(%Test{}=test, number, colorize) do
     {directive, directive_message} = get_directive(test)
-    format_line(
+    Tap.format_line(
       ok?(test),
       number,
       test.case,
       test.name,
       directive,
-      directive_message
+      directive_message,
+      colorize
     )
-  end
-
-  defp format_line(ok, nil), do: format_line(ok)
-  defp format_line(ok, num), do: format_line(ok) <> " #{num}"
-
-  defp format_line(ok, num, nil), do: format_line(ok, num)
-  defp format_line(ok, num, msg), do: format_line(ok, num) <> " #{msg}"
-
-  defp format_line(ok, num, nil, test), do: format_line(ok, num, test)
-  defp format_line(ok, num, kase, nil), do: format_line(ok, num, kase)
-  defp format_line(ok, num, kase, test), do: format_line(ok, num, "#{kase}: #{test}")
-
-  defp format_line(ok, num, kase, test, nil) do
-    format_line(ok, num, kase, test)
-  end
-  defp format_line(ok, num, kase, test, directive) do
-    directive = to_string(directive) |> String.upcase()
-    format_line(ok, num, kase, test) <> " # #{directive}"
-  end
-
-  defp format_line(ok, num, kase, test, directive, nil) do
-    format_line(ok, num, kase, test, directive)
-  end
-  defp format_line(ok, num, kase, test, directive, true) do
-    format_line(ok, num, kase, test, directive)
-  end
-  defp format_line(ok, num, kase, test, _, false) do
-    format_line(ok, num, kase, test, nil)
-  end
-  defp format_line(ok, num, kase, test, directive, directive_message) do
-    format_line(ok, num, kase, test, directive) <> " #{directive_message}"
   end
 
   defp get_directive(%{tags: tags}) do
@@ -177,5 +147,4 @@ defmodule Tapex do
       _ -> false
     end
   end
-
 end
