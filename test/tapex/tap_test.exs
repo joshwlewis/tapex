@@ -14,28 +14,28 @@ defmodule Tapex.TapTest do
   end
 
   test "format_line for pass" do
-    result = Tap.format_line(true, 3, "MyTest", "is awesome", nil, nil, false)
-    assert result == "ok 3 MyTest: is awesome"
+    result = Tap.format_line(true, 3, "is awesome", "MyTest", nil, nil, false)
+    assert result == "ok 3 is awesome (MyTest)"
   end
 
   test "format_line for fail" do
-    result = Tap.format_line(false, 5, "OtherTest", "is lame", nil, nil, false)
-    assert result == "not ok 5 OtherTest: is lame"
+    result = Tap.format_line(false, 5, "is lame", "OtherTest", nil, nil, false)
+    assert result == "not ok 5 is lame (OtherTest)"
   end
 
   test "format_line with skip" do
-    result = Tap.format_line(true, 5, "ATest", "is unspecific", :skip, nil, false)
-    assert result == "ok 5 ATest: is unspecific # SKIP"
+    result = Tap.format_line(true, 5, "is unspecific", "ATest", :skip, nil, false)
+    assert result == "ok 5 is unspecific (ATest) # SKIP"
   end
 
   test "format_line with todo and message" do
-    result = Tap.format_line(true, 12, "ThatTest", "double check", :todo, "fix", false)
+    result = Tap.format_line(true, 12, "double check", "ThatTest", :todo, "fix", false)
 
-    assert result == "ok 12 ThatTest: double check # TODO fix"
+    assert result == "ok 12 double check (ThatTest) # TODO fix"
   end
 
   test "format_line with color" do
-    result = Tap.format_line(true, 42, "SecretTest", "life the universe and everything", nil, nil, true)
-    assert result == "\e[32mok\e[0m 42 SecretTest: \e[32mlife the universe and everything\e[0m"
+    result = Tap.format_line(true, 42, "life the universe and everything", "SecretTest", nil, nil, true)
+    assert result == "\e[32mok\e[0m 42 \e[32mlife the universe and everything\e[0m (SecretTest)"
   end
 end

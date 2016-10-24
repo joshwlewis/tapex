@@ -29,15 +29,16 @@ defmodule Tapex.Tap do
   defp format_line_number(nil, colorize), do: nil
   defp format_line_number(number, colorize), do: to_string(number)
 
-  defp format_line_message(nil, name, color, colorize) do
-    color_wrap(name, color, colorize)
-  end
-  defp format_line_message(case, nil, color, colorize) do
+  defp format_line_message(nil, case, color, colorize) do
     color_wrap(case, color, colorize)
   end
-  defp format_line_message(case, name, color, colorize) do
-    spacecat("#{case}:", color_wrap(name, color, colorize))
+  defp format_line_message(name, nil, color, colorize) do
+    color_wrap(name, color, colorize)
   end
+  defp format_line_message(name, case, color, colorize) do
+    color_wrap(name, color, colorize) |> spacecat("(#{case})")
+  end
+
 
   defp format_line_directive(nil, _, _), do: nil
   defp format_line_directive(_, false, _), do: nil

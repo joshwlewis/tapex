@@ -47,7 +47,8 @@ defmodule Tapex do
     {:ok, config}
   end
 
-  def handle_event(_, config) do
+  def handle_event(stuff, config) do
+    IO.inspect(stuff)
     {:ok, config}
   end
 
@@ -116,8 +117,8 @@ defmodule Tapex do
     Tap.format_line(
       ok?(test),
       number,
-      test.case,
       test.name,
+      test.case,
       directive,
       directive_message,
       colorize
