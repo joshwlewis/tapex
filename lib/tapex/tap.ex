@@ -4,7 +4,7 @@ defmodule Tapex.Tap do
 
   def format_header(), do: "TAP version 13"
 
-  def format_line(ok, number, case, name, directive, message, colorize) do
+  def format_line(ok, number, name, case, directive, message, colorize) do
     message_color =
       case {ok, directive} do
         {true, :todo} -> :cyan
@@ -15,7 +15,7 @@ defmodule Tapex.Tap do
       end
     format_line_status(ok, colorize)
     |> spacecat(format_line_number number, colorize )
-    |> spacecat(format_line_message case, name, message_color, colorize)
+    |> spacecat(format_line_message name, case, message_color, colorize)
     |> spacecat(format_line_directive directive, message, colorize)
   end
 
@@ -39,9 +39,7 @@ defmodule Tapex.Tap do
     color_wrap(name, color, colorize) |> spacecat("(#{case})")
   end
 
-
   defp format_line_directive(nil, _, _), do: nil
-  defp format_line_directive(_, false, _), do: nil
   defp format_line_directive(:skip, message, colorize) do
     "# " <> color_wrap("SKIP", :yellow, colorize) |> spacecat(message)
   end
@@ -56,7 +54,7 @@ defmodule Tapex.Tap do
   end
 
   defp color_wrap(string, color, enabled) do
-    [color | to_string(string)]
+    [color | string]
     |> IO.ANSI.format(enabled)
     |> IO.iodata_to_binary
   end

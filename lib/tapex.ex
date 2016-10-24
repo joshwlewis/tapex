@@ -47,8 +47,7 @@ defmodule Tapex do
     {:ok, config}
   end
 
-  def handle_event(stuff, config) do
-    IO.inspect(stuff)
+  def handle_event(_, config) do
     {:ok, config}
   end
 
@@ -91,20 +90,12 @@ defmodule Tapex do
     Formatter.format_filters(filters, type) |> IO.puts
   end
 
-  defp print_plan(nil), do: nil
-  defp print_plan(0) do
-    IO.puts "1..0"
-  end
-  defp print_plan(count) do
-    IO.puts "1..#{count + 1}"
-  end
-
   defp format_tap(%TestCase{}=case, number, colorize) do
     {directive, directive_message} = get_directive(case)
     Tap.format_line(
       ok?(case),
       number,
-      case.name,
+      to_string(case.name),
       nil,
       directive,
       directive_message,
@@ -117,28 +108,31 @@ defmodule Tapex do
     Tap.format_line(
       ok?(test),
       number,
-      test.name,
-      test.case,
+      to_string(test.name),
+      to_string(test.case),
       directive,
       directive_message,
       colorize
     )
   end
 
-  defp get_directive(%{tags: tags}) do
-    case tags do
-      %{skip: message} -> {:skip, message}
-      %{todo: message} -> {:todo, message}
-      _                -> {nil, nil}
-    end
+  defp get_directive(%{tags: %{skip: true}}) do
+    {:skip, nil}
   end
-
-  defp get_directive(%{state: state}) do
-    if state == :skip do
-      {:skip, true}
-    else
-      {nil, nil}
-    end
+  defp get_directive(%{tags: %{skip: reason}}) when is_binary(reason) do
+    {:skip, reason}
+  end
+  defp get_directive(%{state: {:skip, reason}}) do
+    {:skip, reason}
+  end
+  defp get_directive(%{tags: %{todo: true}}) do
+    {:todo, nil}
+  end
+  defp get_directive(%{tags: %{todo: reason}}) when is_binary(reason) do
+    {:todo, reason}
+  end
+  defp get_directive(%{}) do
+    {nil, nil}
   end
 
   defp ok?(%{state: state}) do
