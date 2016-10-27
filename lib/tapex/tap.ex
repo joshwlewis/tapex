@@ -1,21 +1,35 @@
 defmodule Tapex.Tap do
 
+  alias ExUnit.{Test,TestCase,Formatter}
+
   def format_plan(test_count), do: "1..#{test_count}"
 
   def format_header(), do: "TAP version 13"
 
+
+  def format_diagnostic(%{state: {:failed, failures}}=test, number, colorize) do
+    Formatter.format_test_failure(test, failures, number, :infinity, &diagnostic_formatter(&1, &2, colorize))
+  end
+  def format_diagnostic(_, _, _) do
+    ""
+  end
+
+  defp diagnostic_formatter(_type, message, colorize) do
+    color_wrap(to_string(message), :cyan, colorize)
+  end
+
   def format_line(ok, number, name, case, directive, message, colorize) do
     message_color =
       case {ok, directive} do
+        {_, :skip} -> :yellow
         {true, :todo} -> :cyan
         {false, :todo} -> :magenta
-        {_, :skip} -> :yellow
         {true, _} -> :green
         {false, _} -> :red
       end
     format_line_status(ok, colorize)
     |> spacecat(format_line_number number, colorize )
-    |> spacecat(format_line_message name, case, message_color, colorize)
+    |> spacecat(format_line_description name, case, message_color, colorize)
     |> spacecat(format_line_directive directive, message, colorize)
   end
 
@@ -29,13 +43,13 @@ defmodule Tapex.Tap do
   defp format_line_number(nil, colorize), do: nil
   defp format_line_number(number, colorize), do: to_string(number)
 
-  defp format_line_message(nil, case, color, colorize) do
+  defp format_line_description(nil, case, color, colorize) do
     color_wrap(case, color, colorize)
   end
-  defp format_line_message(name, nil, color, colorize) do
+  defp format_line_description(name, nil, color, colorize) do
     color_wrap(name, color, colorize)
   end
-  defp format_line_message(name, case, color, colorize) do
+  defp format_line_description(name, case, color, colorize) do
     color_wrap(name, color, colorize) |> spacecat("(#{case})")
   end
 

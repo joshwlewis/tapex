@@ -37,6 +37,8 @@ defmodule Tapex do
   def handle_event({:test_finished, test}, %{colors: [enabled: colorize]}=config) do
     %{test_count: number} = config = increment_counters(config, test)
     format_tap(test, number, colorize) |> IO.puts
+    Tap.format_diagnostic(test, get_in(config, [:state_counter, :failed]) || 0, colorize)
+    |> IO.puts
     {:ok, config}
   end
 
