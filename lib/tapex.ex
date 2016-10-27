@@ -6,6 +6,7 @@ defmodule Tapex do
   alias Tapex.Tap
 
   import Tapex.Diagnostic
+  import Tapex.Line
 
   def init(opts) do
     print_filters(Keyword.get(opts, :include, []), :include)
@@ -96,7 +97,7 @@ defmodule Tapex do
 
   defp format_tap(%TestCase{}=case, number, colorize) do
     {directive, directive_message} = get_directive(case)
-    Tap.format_line(
+    format_line(
       ok?(case),
       number,
       to_string(case.name),
@@ -109,7 +110,7 @@ defmodule Tapex do
 
   defp format_tap(%Test{}=test, number, colorize) do
     {directive, directive_message} = get_directive(test)
-    Tap.format_line(
+    format_line(
       ok?(test),
       number,
       to_string(test.name),
