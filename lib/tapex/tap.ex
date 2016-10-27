@@ -6,18 +6,6 @@ defmodule Tapex.Tap do
 
   def format_header(), do: "TAP version 13"
 
-
-  def format_diagnostic(%{state: {:failed, failures}}=test, number, colorize) do
-    Formatter.format_test_failure(test, failures, number, :infinity, &diagnostic_formatter(&1, &2, colorize))
-  end
-  def format_diagnostic(_, _, _) do
-    ""
-  end
-
-  defp diagnostic_formatter(_type, message, colorize) do
-    color_wrap(to_string(message), :cyan, colorize)
-  end
-
   def format_line(ok, number, name, case, directive, message, colorize) do
     message_color =
       case {ok, directive} do
@@ -61,13 +49,13 @@ defmodule Tapex.Tap do
     "# " <> color_wrap("TODO", :blue, colorize) |> spacecat(message)
   end
 
-  defp spacecat(first_string, nil), do: first_string
-  defp spacecat(first_string, ""), do: first_string
-  defp spacecat(first_string, second_string) do
+  def spacecat(first_string, nil), do: first_string
+  def spacecat(first_string, ""), do: first_string
+  def spacecat(first_string, second_string) do
     first_string <> " " <> second_string
   end
 
-  defp color_wrap(string, color, enabled) do
+  def color_wrap(string, color, enabled) do
     [color | string]
     |> IO.ANSI.format(enabled)
     |> IO.iodata_to_binary

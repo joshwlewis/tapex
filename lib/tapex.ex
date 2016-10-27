@@ -5,6 +5,8 @@ defmodule Tapex do
   alias ExUnit.{Formatter, Test, TestCase}
   alias Tapex.Tap
 
+  import Tapex.Diagnostic
+
   def init(opts) do
     print_filters(Keyword.get(opts, :include, []), :include)
     print_filters(Keyword.get(opts, :exclude, []), :exclude)
@@ -37,7 +39,7 @@ defmodule Tapex do
   def handle_event({:test_finished, test}, %{colors: [enabled: colorize]}=config) do
     %{test_count: number} = config = increment_counters(config, test)
     format_tap(test, number, colorize) |> IO.puts
-    Tap.format_diagnostic(test, get_in(config, [:state_counter, :failed]) || 0, colorize)
+    format_diagnostic(test, get_in(config, [:state_counter, :failed]) || 0, colorize)
     |> IO.puts
     {:ok, config}
   end
