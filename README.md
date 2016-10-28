@@ -1,17 +1,16 @@
 # Tapex
 
-TAP (Test Anything Protocol) formatter for Elixir's ExUnit
-
-*Status*: WIP
+TAP (Test Anything Protocol) formatter for Elixir's ExUnit.
 
 ## Features
 
-- Streaming output
-- TAP plan provided before test runs
-- TAP13 diagnostics
-- Support for TAP todos via `@tag :todo` or `@tag todo: "This test
-  occasionally fails, plz fix."`
+- TAP formatted output
+- Streams to STDOUT
+- Optionally outputs ANSI colors
+- ExUnit style failure output
 - ExUnit style final report
+- Reports SKIP directive for skipped tests
+- Reports TODO directive for `@tag :todo` or `@tag todo: "Make it pass"`
 
 ## Installation
 
@@ -25,18 +24,9 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
     end
     ```
 
-  2. Ensure `tapex` is started before your application:
-
-    ```elixir
-    def application do
-      [applications: [:tapex]]
-    end
-    ```
-
-  3. Specify it as your fomatter in `test/test_helper.exs`:
+  2. Specify it as your fomatter in `test/test_helper.exs`:
 
     ```elixir
       ExUnit.configure formatters: [Tapex]
       ExUnit.start()
     ```
-
