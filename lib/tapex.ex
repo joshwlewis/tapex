@@ -37,11 +37,10 @@ defmodule Tapex do
     :remove_handler
   end
 
-  def handle_event({:test_finished, test}, %{colors: [enabled: colorize]}=config) do
+  def handle_event({:test_finished, %{state: state}=test}, %{colors: [enabled: colorize]}=config) do
     %{test_count: number} = config = increment_counters(config, test)
     format_tap(test, number, colorize) |> IO.puts
-    format_diagnostic(test, get_in(config, [:state_counter, :failed]) || 0, colorize)
-    |> IO.puts
+    print_diagnostic(test, get_in(config, [:state_counter, :failed]) ||0, colorize)
     {:ok, config}
   end
 
