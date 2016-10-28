@@ -1,6 +1,11 @@
 defmodule Tapex.Diagnostic do
 
-  import ExUnit.Formatter, only: [{:format_test_failure, 5}]
+  alias ExUnit.{Test,TestCase}
+
+  import ExUnit.Formatter, only: [
+    {:format_test_failure, 5}, 
+    {:format_test_case_failure, 5}
+  ]
   import Tapex.Tap, only: [{:color_wrap, 3}]
 
   def print_diagnostic(test, number, color) do
@@ -10,14 +15,20 @@ defmodule Tapex.Diagnostic do
     end
   end
 
-  def format_diagnostic(%{state: {:failed, failures}}=test, number, color) do
+  def format_diagnostic(%Test{state: {:failed, failures}}=test, number, color) do
     format_test_failure(test, failures, number, :infinity, &formatter(&1, &2, color))
     |> diagnosticify()
   end
+
+  def format_diagnostic(%TestCase{state: {:failed, failures}}=case, number, color) do
+    format_test_case_failure(case, failures, number, :infinity, &formatter(&1, &2, color))
+    |> diagnosticify()
+  end
+
   def format_diagnostic(_test, _number, _color), do: nil
 
-  defp formatter(:diff_enabled?, _, color), do: true
-  defp formatter(:test_info, msg, color), do: ""
+  defp formatter(:diff_enabled?, _, color), do: color
+  defp formatter(:test_info, msg, _color), do: msg
   defp formatter(:error_info, msg, color),
     do: color_wrap(msg, :red, color)
   defp formatter(:extra_info, msg, color),
@@ -34,6 +45,6 @@ defmodule Tapex.Diagnostic do
   defp diagnosticify(message) when is_binary(message) do
     String.split(message, "\n")
     |> Enum.reject(&(String.strip(&1) == ""))
-    |> Enum.map_join("\n", &("# " <> &1))
+    |> Enum.map_join("\n", &("#    " <> &1))
   end
 end
