@@ -20,7 +20,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
     ```elixir
     def deps do
-      [{:tapex, "~> 0.1.0"}]
+      [{:tapex, "~> 0.1.0", only: :test}]
     end
     ```
 
