@@ -2,7 +2,7 @@ defmodule Tapex do
 
   use GenEvent
 
-  alias ExUnit.{Formatter, Test, TestCase}
+  alias ExUnit.{Formatter}
   alias Tapex.Tap
 
   import Tapex.Diagnostic
@@ -37,7 +37,7 @@ defmodule Tapex do
     :remove_handler
   end
 
-  def handle_event({:test_finished, %{state: state}=test}, %{colors: [enabled: colorize]}=config) do
+  def handle_event({:test_finished, %{}=test}, %{colors: [enabled: colorize]}=config) do
     %{test_count: number} = config = increment_counters(config, test)
     print_line(test, number, colorize)
     print_diagnostic(test, get_in(config, [:state_counter, :failed]) || 0, colorize)
