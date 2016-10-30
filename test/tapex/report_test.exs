@@ -3,18 +3,39 @@ defmodule Tapex.ReportTest do
 
   import Tapex.Report
 
-  test "format_counts/1 displays passed and failed" do
+  test "format_counts/1 displays passed failed and skipped" do
     conf = %{
+      colorize: false,
       test_count: 4,
       state_counter: %{
         passed: 2,
-        failed: 2,
+        failed: 0,
+        skipped: 1,
       },
       tag_counter: %{}
     }
 
     result = format_counts(conf)
 
-    assert result == "4 tests, 2 passed, 2 failed"
+    assert result == "4 tests, 2 passed, 0 failed, 1 skipped"
+  end
+
+  test "format_counts displays colors when enabled" do
+    conf = %{
+      colorize: true,
+      test_count: 5,
+      state_counter: %{
+        passed: 1,
+        failed: 2,
+        invalid: 1,
+      },
+      tag_counter: %{}
+    }
+
+    result = format_counts(conf)
+
+    expected = "\e[32m5 tests\e[0m, \e[32m1 passed\e[0m, \e[31m2 failed\e[0m, \e[33m1 invalid\e[0m"
+
+    assert result  == expected
   end
 end

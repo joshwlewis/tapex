@@ -2,8 +2,7 @@ defmodule Tapex.Report do
 
   import Tapex.Tap, only: [{:color_wrap, 3}]
 
-  def format_counts(%{test_count: count, state_counter: states, tag_counter: tags}) do
-    colorize = false
+  def format_counts(%{colorize: colorize, test_count: count, state_counter: states, tag_counter: tags}) do
     color = :green
     [
       format_count(count, color, colorize),
