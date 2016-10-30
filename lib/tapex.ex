@@ -7,6 +7,7 @@ defmodule Tapex do
 
   import Tapex.Diagnostic
   import Tapex.Line
+  import Tapex.Report
 
   def init(opts) do
     print_filters(Keyword.get(opts, :include, []), :include)
@@ -14,11 +15,12 @@ defmodule Tapex do
     IO.puts("")
 
     config = %{
-      seed: opts[:seed],
       colorize: get_in(opts, [:colors, :enabled]) || IO.ANSI.enabled?,
-      type_counter: %{},
       state_counter: %{},
+      seed: opts[:seed],
+      tag_counter: %{},
       test_count: 0,
+      type_counter: %{}
     }
 
     Tap.format_header |> IO.puts
@@ -26,13 +28,9 @@ defmodule Tapex do
     {:ok, config}
   end
 
-  def handle_event({:suite_started, opts}, config) do
-    Tap.format_plan(Dict.get(opts, :max_cases)) |> IO.puts
-    {:ok, config}
-  end
-
-  def handle_event({:suite_finished, _, _}, _) do
-    # TODO: print the suite summary
+  def handle_event({:suite_finished, _, _}, %{test_count: count}=config) do
+    Tap.format_plan(count) |> IO.puts
+    format_counts(config) |> IO.puts
     :remove_handler
   end
 
