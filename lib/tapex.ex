@@ -40,13 +40,14 @@ defmodule Tapex do
   def handle_event({:test_finished, %{state: state}=test}, %{colors: [enabled: colorize]}=config) do
     %{test_count: number} = config = increment_counters(config, test)
     print_line(test, number, colorize)
-    print_diagnostic(test, get_in(config, [:state_counter, :failed]) ||0, colorize)
+    print_diagnostic(test, get_in(config, [:state_counter, :failed]) || 0, colorize)
     {:ok, config}
   end
 
   def handle_event({:case_finished, case}, %{colors: [enabled: colorize]}=config) do
     %{test_count: number} = config = increment_counters(config, case)
     print_line(case, number, colorize)
+    print_diagnostic(case, get_in(config, [:state_counter, :failed]) || 0, colorize)
     {:ok, config}
   end
 
