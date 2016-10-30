@@ -39,15 +39,14 @@ defmodule Tapex do
 
   def handle_event({:test_finished, %{state: state}=test}, %{colors: [enabled: colorize]}=config) do
     %{test_count: number} = config = increment_counters(config, test)
-    format_tap(test, number, colorize) |> IO.puts
+    print_line(test, number, colorize)
     print_diagnostic(test, get_in(config, [:state_counter, :failed]) ||0, colorize)
     {:ok, config}
   end
 
-
   def handle_event({:case_finished, case}, %{colors: [enabled: colorize]}=config) do
     %{test_count: number} = config = increment_counters(config, case)
-    format_tap(case, number, colorize) |> IO.puts
+    print_line(case, number, colorize)
     {:ok, config}
   end
 
@@ -94,56 +93,4 @@ defmodule Tapex do
     Formatter.format_filters(filters, type) |> IO.puts
   end
 
-  defp format_tap(%TestCase{}=case, number, colorize) do
-    {directive, directive_message} = get_directive(case)
-    format_line(
-      ok?(case),
-      number,
-      to_string(case.name),
-      nil,
-      directive,
-      directive_message,
-      colorize
-    )
-  end
-
-  defp format_tap(%Test{}=test, number, colorize) do
-    {directive, directive_message} = get_directive(test)
-    format_line(
-      ok?(test),
-      number,
-      to_string(test.name),
-      to_string(test.case),
-      directive,
-      directive_message,
-      colorize
-    )
-  end
-
-  defp get_directive(%{tags: %{skip: true}}) do
-    {:skip, nil}
-  end
-  defp get_directive(%{tags: %{skip: reason}}) when is_binary(reason) do
-    {:skip, reason}
-  end
-  defp get_directive(%{state: {:skip, reason}}) do
-    {:skip, reason}
-  end
-  defp get_directive(%{tags: %{todo: true}}) do
-    {:todo, nil}
-  end
-  defp get_directive(%{tags: %{todo: reason}}) when is_binary(reason) do
-    {:todo, reason}
-  end
-  defp get_directive(%{}) do
-    {nil, nil}
-  end
-
-  defp ok?(%{state: state}) do
-    case state do
-      nil -> true
-      {:skip, _} -> true
-      _ -> false
-    end
-  end
 end

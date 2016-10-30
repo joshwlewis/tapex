@@ -1,6 +1,38 @@
 defmodule Tapex.Line do
   import Tapex.Tap, only: [{:spacecat, 2}, {:color_wrap, 3}]
 
+  alias ExUnit.{Test,TestCase}
+
+  def print_line(test, number, colorize) do
+    format_line(test, number, colorize) |> IO.puts
+  end
+
+  def format_line(%TestCase{}=case, number, colorize) do
+    {directive, directive_message} = get_directive(case)
+    format_line(
+      ok?(case),
+      number,
+      to_string(case.name),
+      nil,
+      directive,
+      directive_message,
+      colorize
+    )
+  end
+
+  def format_line(%Test{}=test, number, colorize) do
+    {directive, directive_message} = get_directive(test)
+    format_line(
+      ok?(test),
+      number,
+      to_string(test.name),
+      to_string(test.case),
+      directive,
+      directive_message,
+      colorize
+    )
+  end
+
   def format_line(ok, number, name, case, directive, message, colorize) do
     message_color =
       case {ok, directive} do
@@ -44,4 +76,30 @@ defmodule Tapex.Line do
     "# " <> color_wrap("TODO", :blue, colorize) |> spacecat(message)
   end
 
+  defp get_directive(%{tags: %{skip: true}}) do
+    {:skip, nil}
+  end
+  defp get_directive(%{tags: %{skip: reason}}) when is_binary(reason) do
+    {:skip, reason}
+  end
+  defp get_directive(%{state: {:skip, reason}}) do
+    {:skip, reason}
+  end
+  defp get_directive(%{tags: %{todo: true}}) do
+    {:todo, nil}
+  end
+  defp get_directive(%{tags: %{todo: reason}}) when is_binary(reason) do
+    {:todo, reason}
+  end
+  defp get_directive(%{}) do
+    {nil, nil}
+  end
+
+  defp ok?(%{state: state}) do
+    case state do
+      nil -> true
+      {:skip, _} -> true
+      _ -> false
+    end
+  end
 end
