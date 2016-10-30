@@ -15,7 +15,6 @@ defmodule Tapex do
 
     config = %{
       seed: opts[:seed],
-      trace: opts[:trace],
       colors: Keyword.put_new(opts[:colors], :enabled, IO.ANSI.enabled?),
       type_counter: %{},
       state_counter: %{},
