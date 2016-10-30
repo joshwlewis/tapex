@@ -29,7 +29,7 @@ defmodule TapexTest do
     }
 
     config = %{
-      colors: [enabled: false],
+      colorize: false,
       type_counter: %{},
       status_counter: %{},
       test_count: 0
@@ -50,7 +50,7 @@ defmodule TapexTest do
     }
 
     config = %{
-      colors: [enabled: false],
+      colorize: false,
       type_counter: %{},
       status_counter: %{},
       test_count: 0

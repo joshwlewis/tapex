@@ -15,7 +15,7 @@ defmodule Tapex do
 
     config = %{
       seed: opts[:seed],
-      colors: Keyword.put_new(opts[:colors], :enabled, IO.ANSI.enabled?),
+      colorize: get_in(opts, [:colors, :enabled]) || IO.ANSI.enabled?,
       type_counter: %{},
       state_counter: %{},
       test_count: 0,
@@ -36,14 +36,14 @@ defmodule Tapex do
     :remove_handler
   end
 
-  def handle_event({:test_finished, %{}=test}, %{colors: [enabled: colorize]}=config) do
+  def handle_event({:test_finished, %{}=test}, %{colorize: colorize}=config) do
     %{test_count: number} = config = increment_counters(config, test)
     print_line(test, number, colorize)
     print_diagnostic(test, get_in(config, [:state_counter, :failed]) || 0, colorize)
     {:ok, config}
   end
 
-  def handle_event({:case_finished, case}, %{colors: [enabled: colorize]}=config) do
+  def handle_event({:case_finished, case}, %{colorize: colorize}=config) do
     %{test_count: number} = config = increment_counters(config, case)
     print_line(case, number, colorize)
     print_diagnostic(case, get_in(config, [:state_counter, :failed]) || 0, colorize)
