@@ -59,6 +59,7 @@ defmodule Tapex do
     increment_test_count(config)
     |> increment_type_counter(test)
     |> increment_state_counter(test)
+    |> increment_tag_counter(test)
   end
 
   defp increment_type_counter(%{type_counter: counter}=config, %{tags: %{type: type}}) do
@@ -69,17 +70,24 @@ defmodule Tapex do
     config
   end
 
-  defp increment_state_counter(%{state_counter: counter}=config, %{state: state, tags: tags}) do
-    counter = Map.update(counter, state || :passed, 1, &(&1 + 1))
-    counter =
-      case Map.get(tags, :todo) do
-        nil -> counter
-        _ -> Map.update(counter, :todo, 1, &(&1 + 1))
-      end
-    %{config | type_counter: counter}
+  defp increment_state_counter(%{state_counter: counter}=config, %{state: {state, _}}) do
+    %{config | state_counter: Map.update(counter, state, 1, &(&1 + 1))}
+  end
+  defp increment_state_counter(%{state_counter: counter}=config, %{state: nil}) do
+    %{config | state_counter: Map.update(counter, :passed, 1, &(&1 + 1))}
+  end
+  defp increment_state_counter(%{}=config, %{}) do
+    config
   end
 
-  defp increment_state_counter(%{}=config, %{}) do
+  defp increment_tag_counter(%{tag_counter: counter}=config, %{tags: %{todo: todo}}) do
+    case todo do
+      false -> config
+      nil   -> config
+      _     -> %{config | tag_counter: Map.update(counter, :todo, 1, &(&1 + 1))}
+    end
+  end
+  defp increment_tag_counter(%{}=config, %{}) do
     config
   end
 
