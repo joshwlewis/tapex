@@ -12,18 +12,22 @@ defmodule Tapex do
   def init(opts) do
     print_filters(Keyword.get(opts, :include, []), :include)
     print_filters(Keyword.get(opts, :exclude, []), :exclude)
-    IO.puts("")
+
+    Tap.format_header |> IO.puts
+
+    colorize = case get_in(opts, [:colors, :enabled]) do
+      nil     -> IO.ANSI.enabled?
+      enabled -> enabled
+    end
 
     config = %{
-      colorize: get_in(opts, [:colors, :enabled]) || IO.ANSI.enabled?,
+      colorize: colorize,
       state_counter: %{},
       seed: opts[:seed],
       tag_counter: %{},
       test_count: 0,
       type_counter: %{}
     }
-
-    Tap.format_header |> IO.puts
 
     {:ok, config}
   end
