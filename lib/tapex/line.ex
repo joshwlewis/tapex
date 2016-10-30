@@ -7,33 +7,13 @@ defmodule Tapex.Line do
     format_line(test, number, colorize) |> IO.puts
   end
 
-  def format_line(%TestCase{}=case, number, colorize) do
-    {directive, directive_message} = get_directive(case)
-    format_line(
-      ok?(case),
-      number,
-      to_string(case.name),
-      nil,
-      directive,
-      directive_message,
-      colorize
-    )
-  end
+  def format_line(%{}=test, number, colorize) do
+    ok = ok?(test)
+    {directive, message} = get_directive(test)
 
-  def format_line(%Test{}=test, number, colorize) do
-    {directive, directive_message} = get_directive(test)
-    format_line(
-      ok?(test),
-      number,
-      to_string(test.name),
-      to_string(test.case),
-      directive,
-      directive_message,
-      colorize
-    )
-  end
+    name = Map.get(test, :name)
+    case = Map.get(test, :case)
 
-  def format_line(ok, number, name, case, directive, message, colorize) do
     message_color =
       case {ok, directive} do
         {_, :skip} -> :yellow
@@ -42,6 +22,7 @@ defmodule Tapex.Line do
         {true, _} -> :green
         {false, _} -> :red
       end
+
     format_line_status(ok, colorize)
     |> spacecat(format_line_number number, colorize)
     |> spacecat(format_line_description name, case, message_color, colorize)
@@ -59,13 +40,13 @@ defmodule Tapex.Line do
   defp format_line_number(number, colorize), do: to_string(number)
 
   defp format_line_description(nil, case, color, colorize) do
-    color_wrap(case, color, colorize)
+    color_wrap(to_string(case), color, colorize)
   end
   defp format_line_description(name, nil, color, colorize) do
-    color_wrap(name, color, colorize)
+    color_wrap(to_string(name), color, colorize)
   end
   defp format_line_description(name, case, color, colorize) do
-    color_wrap(name, color, colorize) |> spacecat("(#{case})")
+    color_wrap(to_string(name), color, colorize) |> spacecat("(#{case})")
   end
 
   defp format_line_directive(nil, _, _), do: nil
