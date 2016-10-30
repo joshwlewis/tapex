@@ -92,5 +92,4 @@ defmodule Tapex do
   defp print_filters(filters, type) do
     Formatter.format_filters(filters, type) |> IO.puts
   end
-
 end
