@@ -67,6 +67,7 @@ defmodule TapexTest do
     config = %{
       colorize: false,
       test_count: 5,
+      seed: "12345",
       state_counter: %{
         passed: 4,
         failed: 1
@@ -82,5 +83,6 @@ defmodule TapexTest do
     assert String.contains?(output, "1..5\n")
     assert String.contains?(output, "Finished in 1.0 seconds")
     assert String.contains?(output, "5 tests, 4 passed, 1 failed")
+    assert String.contains?(output, "Randomized with seed 12345")
   end
 end

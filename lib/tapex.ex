@@ -32,11 +32,13 @@ defmodule Tapex do
     {:ok, config}
   end
 
-  def handle_event({:suite_finished, run_time, load_time}, %{test_count: count}=config) do
+  def handle_event({:suite_finished, run_time, load_time}, %{test_count: count, seed: seed}=config) do
     IO.puts(Tap.format_plan(count))
     IO.puts("")
     IO.puts(Formatter.format_time(run_time, load_time))
     IO.puts(format_counts(config))
+
+    IO.puts("\nRandomized with seed #{seed}")
 
     :remove_handler
   end
