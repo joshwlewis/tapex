@@ -75,10 +75,12 @@ defmodule TapexTest do
     }
 
     output = capture_io fn ->
-      :remove_handler = Tapex.handle_event({:suite_finished, nil, nil}, config)
+      time = 500000
+      :remove_handler = Tapex.handle_event({:suite_finished, time, time}, config)
     end
 
     assert String.contains?(output, "1..5\n")
+    assert String.contains?(output, "Finished in 1.0 seconds")
     assert String.contains?(output, "5 tests, 4 passed, 1 failed")
   end
 end

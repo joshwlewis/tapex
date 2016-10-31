@@ -32,9 +32,12 @@ defmodule Tapex do
     {:ok, config}
   end
 
-  def handle_event({:suite_finished, _, _}, %{test_count: count}=config) do
-    Tap.format_plan(count) |> IO.puts
-    format_counts(config) |> IO.puts
+  def handle_event({:suite_finished, run_time, load_time}, %{test_count: count}=config) do
+    IO.puts(Tap.format_plan(count))
+    IO.puts("")
+    IO.puts(Formatter.format_time(run_time, load_time))
+    IO.puts(format_counts(config))
+
     :remove_handler
   end
 
