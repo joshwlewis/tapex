@@ -2,8 +2,8 @@ defmodule Tapex.Report do
 
   import Tapex.Tap, only: [{:color_wrap, 3}]
 
-  def format_counts(%{colorize: colorize, test_count: count, state_counter: states, tag_counter: tags}) do
-    color = :green
+  def format_counts(%{colorize: colorize, test_count: count, state_counter: states, tag_counter: tags}=config) do
+    color = get_report_color(config)
     [
       format_count(count, color, colorize),
       format_passed(states, color, colorize),
@@ -42,9 +42,9 @@ defmodule Tapex.Report do
   def format_invalid(_counter, _colorize),
     do: nil
 
-  def format_skipped(%{skipped: 0}, _colorize),
+  def format_skipped(%{skip: 0}, _colorize),
     do: nil
-  def format_skipped(%{skipped: n}, colorize),
+  def format_skipped(%{skip: n}, colorize),
     do: color_wrap("#{n} skipped", :yellow, colorize)
   def format_skipped(_counter, _colorize),
     do: nil
@@ -55,4 +55,15 @@ defmodule Tapex.Report do
     do: color_wrap("#{n} todo", :blue, colorize)
   def format_todo(_counter, _colorize),
     do: nil
+
+  def get_report_color(%{}=config) do
+    cond do
+      get_in(config, [:state_counter, :failed])  -> :red
+      get_in(config, [:state_counter, :invalid]) -> :yellow
+      get_in(config, [:state_counter, :skip])    -> :yellow
+      get_in(config, [:tag_counter,   :todo])    -> :blue
+      get_in(config, [:state_counter, :passed])  -> :green
+      true                                       -> :red
+    end
+  end
 end

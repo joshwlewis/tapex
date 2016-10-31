@@ -10,7 +10,7 @@ defmodule Tapex.ReportTest do
       state_counter: %{
         passed: 2,
         failed: 0,
-        skipped: 1,
+        skip: 1,
       },
       tag_counter: %{}
     }
@@ -34,7 +34,7 @@ defmodule Tapex.ReportTest do
 
     result = format_counts(conf)
 
-    expected = "\e[32m5 tests\e[0m, \e[32m1 passed\e[0m, \e[31m2 failed\e[0m, \e[33m1 invalid\e[0m"
+    expected = "\e[31m5 tests\e[0m, \e[31m1 passed\e[0m, \e[31m2 failed\e[0m, \e[33m1 invalid\e[0m"
 
     assert result  == expected
   end
