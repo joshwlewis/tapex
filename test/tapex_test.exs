@@ -20,7 +20,7 @@ defmodule TapexTest do
     end
   end
 
-  test "test_finished event prints TAP line" do
+  test ":test_finished event prints TAP line" do
     test = %ExUnit.Test{
       state: nil,
       tags: [],
@@ -61,5 +61,24 @@ defmodule TapexTest do
     end
 
     assert Regex.match?(~r/^not ok/, output)
+  end
+
+  test ":suite_finished prints a report" do
+    config = %{
+      colorize: false,
+      test_count: 5,
+      state_counter: %{
+        passed: 4,
+        failed: 1
+      },
+      tag_counter: %{}
+    }
+
+    output = capture_io fn ->
+      :remove_handler = Tapex.handle_event({:suite_finished, nil, nil}, config)
+    end
+
+    assert String.contains?(output, "1..5\n")
+    assert String.contains?(output, "5 tests, 4 passed, 1 failed")
   end
 end
