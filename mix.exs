@@ -3,25 +3,30 @@ defmodule Tapex.Mixfile do
 
   def project do
     [app: :tapex,
-     description: "Tapex is a TAP (Test Anything Protocol) formatter for ExUnit.",
-     version: "0.1.0",
+     deps: deps(),
+     description: description(),
      elixir: "~> 1.2",
-     deps: deps()]
+     package: package(),
+     version: "0.1.0"]
   end
 
   def application do
     []
   end
 
-  defp deps do
-    []
+  defp description do
+    "Tapex is a TAP (Test Anything Protocol) formatter for ExUnit."
   end
 
-  def package do
+  defp package do
     [
       maintainers: ["Josh W Lewis"],
-      licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/joshwlewis/tapex"}
+      licenses:    ["MIT"],
+      links:       %{"GitHub" => "https://github.com/joshwlewis/tapex"}
     ]
+  end
+
+  defp deps do
+    [{:ex_doc, "~> 0.14", only: :dev}]
   end
 end
