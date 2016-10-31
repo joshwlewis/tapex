@@ -1,5 +1,5 @@
 defmodule Tapex.Line do
-  import Tapex.Tap, only: [{:spacecat, 2}, {:color_wrap, 3}]
+  import Tapex.Tap, only: [{:leftpad, 2}, {:rightpad, 2}, {:spacecat, 2}, {:color_wrap, 3}]
 
   alias ExUnit.{Test,TestCase}
 
@@ -24,20 +24,22 @@ defmodule Tapex.Line do
       end
 
     format_line_status(ok, colorize)
-    |> spacecat(format_line_number number, colorize)
+    <> format_line_number(number)
     |> spacecat(format_line_description name, case, message_color, colorize)
     |> spacecat(format_line_directive directive, message, colorize)
   end
 
   defp format_line_status(true, colorize) do
-    color_wrap("ok", :green, colorize)
+    rightpad("ok", 6)
+    |> color_wrap(:green, colorize)
   end
   defp format_line_status(false, colorize) do
-    color_wrap("not ok", :red, colorize)
+    rightpad("not ok", 6)
+    |> color_wrap(:red, colorize)
   end
 
-  defp format_line_number(nil, colorize), do: nil
-  defp format_line_number(number, colorize), do: to_string(number)
+  defp format_line_number(number),
+    do: leftpad(to_string(number), 4)
 
   defp format_line_description(nil, case, color, colorize) do
     color_wrap(to_string(case), color, colorize)

@@ -45,6 +45,6 @@ defmodule Tapex.Diagnostic do
   defp diagnosticify(message) when is_binary(message) do
     String.split(message, "\n")
     |> Enum.reject(&(String.strip(&1) == ""))
-    |> Enum.map_join("\n", &("#    " <> &1))
+    |> Enum.map_join("\n", &("#     " <> &1))
   end
 end

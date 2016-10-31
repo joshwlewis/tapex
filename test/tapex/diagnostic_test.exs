@@ -17,12 +17,12 @@ defmodule Tapex.DiagnosticTest do
     actual = format_diagnostic(test, 2, false)
 
     expected =
-      "#      2) everything is awesome (nil)\n" <>
-      "#         awesome.ex:12\n" <>
-      "#         not awesome\n" <>
-      "#         code: Awesum!()\n" <>
-      "#         stacktrace:\n" <>
-      "#           (tapex) awesome.ex:42: Tapex.awesome/1"
+      "#       2) everything is awesome (nil)\n" <>
+      "#          awesome.ex:12\n" <>
+      "#          not awesome\n" <>
+      "#          code: Awesum!()\n" <>
+      "#          stacktrace:\n" <>
+      "#            (tapex) awesome.ex:42: Tapex.awesome/1"
 
     assert expected == actual
   end
@@ -37,10 +37,10 @@ defmodule Tapex.DiagnosticTest do
     actual = format_diagnostic(case, 5, true)
 
     expected =
-      "#      5) nil: failure on setup_all callback, tests invalidated\n" <>
-      "#         \e[31m** (RuntimeError) BOOM!\e[0m\n" <>
-      "#         \e[36mstacktrace:\e[0m\n" <>
-      "#           (tapex) my_module.ex:20: Tapex.my_method/1"
+      "#       5) nil: failure on setup_all callback, tests invalidated\n" <>
+      "#          \e[31m** (RuntimeError) BOOM!\e[0m\n" <>
+      "#          \e[36mstacktrace:\e[0m\n" <>
+      "#            (tapex) my_module.ex:20: Tapex.my_method/1"
 
     assert expected == actual
   end

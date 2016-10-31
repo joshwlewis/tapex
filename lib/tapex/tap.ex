@@ -17,4 +17,15 @@ defmodule Tapex.Tap do
     |> IO.ANSI.format(enabled)
     |> IO.iodata_to_binary
   end
+
+  def leftpad(string, count) do
+    space(count-String.length(string)) <> string
+  end
+
+  def rightpad(string, count) do
+    string <> space(count-String.length(string))
+  end
+
+  def space(n) when n > 0, do: " " <> space(n-1)
+  def space(_), do: ""
 end

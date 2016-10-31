@@ -10,7 +10,7 @@ defmodule Tapex.LineTest do
       name: "is awesome",
     }
     result = format_line(test, 3, false)
-    assert result == "ok 3 is awesome (MyTest)"
+    assert result == "ok       3 is awesome (MyTest)"
   end
 
   test "format_line for fail" do
@@ -21,7 +21,7 @@ defmodule Tapex.LineTest do
     }
 
     result = format_line(test, 5, false)
-    assert result == "not ok 5 is lame (OtherTest)"
+    assert result == "not ok   5 is lame (OtherTest)"
   end
 
   test "format_line with skip" do
@@ -33,7 +33,7 @@ defmodule Tapex.LineTest do
     }
 
     result = format_line(test, 5, false)
-    assert result == "ok 5 is unspecific (ATest) # SKIP"
+    assert result == "ok       5 is unspecific (ATest) # SKIP"
   end
 
   test "format_line with todo and message" do
@@ -45,7 +45,7 @@ defmodule Tapex.LineTest do
     }
 
     result = format_line(test, 12, false)
-    assert result == "ok 12 double check (ThatTest) # TODO fix"
+    assert result == "ok      12 double check (ThatTest) # TODO fix"
   end
 
   test "format_line with color" do
@@ -56,6 +56,6 @@ defmodule Tapex.LineTest do
     }
 
     result = format_line(test, 42, true)
-    assert result == "\e[32mok\e[0m 42 \e[32mlife the universe and everything\e[0m (SecretTest)"
+    assert result == "\e[32mok    \e[0m  42 \e[32mlife the universe and everything\e[0m (SecretTest)"
   end
 end
