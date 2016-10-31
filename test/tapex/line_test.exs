@@ -3,6 +3,7 @@ defmodule Tapex.LineTest do
 
   import Tapex.Line
 
+  @tag skip: "This test is flappy"
   test "format_line for pass" do
     test = %{
       state: nil,

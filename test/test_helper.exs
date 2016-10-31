@@ -1,2 +1,2 @@
-ExUnit.configure(formatters: [ExUnit.CLIFormatter, Tapex])
+ExUnit.configure(formatters: [Tapex])
 ExUnit.start()

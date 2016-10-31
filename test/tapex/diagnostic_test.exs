@@ -27,6 +27,7 @@ defmodule Tapex.DiagnosticTest do
     assert expected == actual
   end
 
+  @tag todo: "Make assertions less strict"
   test "format_diagnostic for TestCase with color" do
     error = %RuntimeError{message: "BOOM!"}
     trace = [{Tapex, :my_method, 1, [file: 'my_module.ex', line: 20]}]
