@@ -1,7 +1,5 @@
 defmodule Tapex.Tap do
 
-  alias ExUnit.{Test,TestCase,Formatter}
-
   def format_plan(test_count), do: "1..#{test_count}"
 
   def format_header(), do: "TAP version 13"

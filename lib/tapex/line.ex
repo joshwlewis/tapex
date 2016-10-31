@@ -1,8 +1,6 @@
 defmodule Tapex.Line do
   import Tapex.Tap, only: [{:leftpad, 2}, {:rightpad, 2}, {:spacecat, 2}, {:color_wrap, 3}]
 
-  alias ExUnit.{Test,TestCase}
-
   def print_line(test, number, colorize) do
     format_line(test, number, colorize) |> IO.puts
   end
