@@ -1,6 +1,6 @@
 defmodule Tapex do
 
-  use GenEvent
+  use GenServer
 
   alias ExUnit.{Formatter}
   alias Tapex.Tap
@@ -32,7 +32,7 @@ defmodule Tapex do
     {:ok, config}
   end
 
-  def handle_event({:suite_finished, run_time, load_time}, %{test_count: count, seed: seed}=config) do
+  def handle_cast({:suite_finished, run_time, load_time}, %{test_count: count, seed: seed}=config) do
     IO.puts(Tap.format_plan(count))
     IO.puts("")
     IO.puts(Formatter.format_time(run_time, load_time))
@@ -40,25 +40,25 @@ defmodule Tapex do
 
     IO.puts("\nRandomized with seed #{seed}")
 
-    :remove_handler
+    {:noreply, config}
   end
 
-  def handle_event({:test_finished, %{}=test}, %{colorize: colorize}=config) do
+  def handle_cast({:test_finished, %{}=test}, %{colorize: colorize}=config) do
     %{test_count: number} = config = increment_counters(config, test)
     print_line(test, number, colorize)
     print_diagnostic(test, get_in(config, [:state_counter, :failed]) || 0, colorize)
-    {:ok, config}
+    {:noreply, config}
   end
 
-  def handle_event({:case_finished, case}, %{colorize: colorize}=config) do
+  def handle_cast({:case_finished, case}, %{colorize: colorize}=config) do
     %{test_count: number} = config = increment_counters(config, case)
     print_line(case, number, colorize)
     print_diagnostic(case, get_in(config, [:state_counter, :failed]) || 0, colorize)
-    {:ok, config}
+    {:noreply, config}
   end
 
-  def handle_event(_, config) do
-    {:ok, config}
+  def handle_cast(_, config) do
+    {:noreply, config}
   end
 
   defp increment_counters(%{}=config, %{}=test) do
