@@ -12,7 +12,7 @@ defmodule Tapex.DiagnosticTest do
     test = %ExUnit.Test{
       state: {:failed, [{:error, failure, trace}]},
       name: "everything is awesome",
-      tags: [file: "awesome.ex", line: 12]
+      tags: %{file: "awesome.ex", line: 12}
     }
     actual = format_diagnostic(test, 2, false)
 
@@ -27,7 +27,6 @@ defmodule Tapex.DiagnosticTest do
     assert expected == actual
   end
 
-  @tag todo: "Make assertions less strict"
   test "format_diagnostic for TestCase with color" do
     error = %RuntimeError{message: "BOOM!"}
     trace = [{Tapex, :my_method, 1, [file: 'my_module.ex', line: 20]}]
@@ -38,7 +37,7 @@ defmodule Tapex.DiagnosticTest do
     actual = format_diagnostic(case, 5, true)
 
     expected =
-      "#       5) nil: failure on setup_all callback, tests invalidated\n" <>
+      "#       5) nil: failure on setup_all callback, test invalidated\n" <>
       "#          \e[31m** (RuntimeError) BOOM!\e[0m\n" <>
       "#          \e[36mstacktrace:\e[0m\n" <>
       "#            (tapex) my_module.ex:20: Tapex.my_method/1"
