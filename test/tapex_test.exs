@@ -36,7 +36,7 @@ defmodule TapexTest do
     }
 
     output = capture_io fn ->
-      {:ok, _} = Tapex.handle_event({:test_finished, test}, config)
+      {:noreply, _} = Tapex.handle_cast({:test_finished, test}, config)
     end
 
     assert Regex.match?(~r/^ok/, output)
@@ -57,7 +57,7 @@ defmodule TapexTest do
     }
 
     output = capture_io fn ->
-      {:ok, _} = Tapex.handle_event({:case_finished, case}, config)
+      {:noreply, _} = Tapex.handle_cast({:case_finished, case}, config)
     end
 
     assert Regex.match?(~r/^not ok/, output)
@@ -77,7 +77,7 @@ defmodule TapexTest do
 
     output = capture_io fn ->
       time = 500000
-      :remove_handler = Tapex.handle_event({:suite_finished, time, time}, config)
+      {:noreply, _} = Tapex.handle_cast({:suite_finished, time, time}, config)
     end
 
     assert String.contains?(output, "1..5\n")
