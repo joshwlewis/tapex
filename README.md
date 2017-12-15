@@ -19,18 +19,18 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
   1. Add `tapex` to your list of dependencies in `mix.exs`:
 
-    ```elixir
-    def deps do
-      [{:tapex, "~> 0.1.0", only: :test}]
-    end
-    ```
+```elixir
+def deps do
+  [{:tapex, "~> 0.1.0", only: :test}]
+end
+```
 
   2. Specify it as your fomatter in `test/test_helper.exs`:
 
-    ```elixir
-      ExUnit.configure formatters: [Tapex]
-      ExUnit.start()
-    ```
+```elixir
+  ExUnit.configure formatters: [Tapex]
+  ExUnit.start()
+```
 
 ## Usage
 
