@@ -32,10 +32,16 @@ defmodule Tapex do
     {:ok, config}
   end
 
-  def handle_cast({:suite_finished, run_time, load_time}, %{test_count: count, seed: seed}=config) do
+  # Elixir <1.12
+  def handle_cast({:suite_finished, run, load}, config) do
+    handle_cast({:suite_finished, %{run: run, load: load, async: nil}}, config)
+  end
+
+  # Elixir >=1.12
+  def handle_cast({:suite_finished, times_us}, %{test_count: count, seed: seed}=config) do
     IO.puts(Tap.format_plan(count))
     IO.puts("")
-    IO.puts(Formatter.format_time(run_time, load_time))
+    IO.puts(format_times(times_us))
     IO.puts(format_counts(config))
 
     IO.puts("\nRandomized with seed #{seed}")
@@ -106,5 +112,11 @@ defmodule Tapex do
   end
   defp print_filters(filters, type) do
     Formatter.format_filters(filters, type) |> IO.puts
+  end
+
+  if Version.compare(System.version(), "1.12.0-0") == :gt do
+    defp format_times(times_us), do: Formatter.format_times(times_us)
+  else
+    defp format_times(%{run: run, load: load} = _), do: Formatter.format_time(run, load)
   end
 end

@@ -63,7 +63,7 @@ defmodule TapexTest do
     assert Regex.match?(~r/^not ok/, output)
   end
 
-  test ":suite_finished prints a report" do
+  test ":suite_finished prints a report (Elixir <1.12)" do
     config = %{
       colorize: false,
       test_count: 5,
@@ -78,6 +78,29 @@ defmodule TapexTest do
     output = capture_io fn ->
       time = 500000
       {:noreply, _} = Tapex.handle_cast({:suite_finished, time, time}, config)
+    end
+
+    assert String.contains?(output, "1..5\n")
+    assert String.contains?(output, "Finished in 1.0 seconds")
+    assert String.contains?(output, "5 tests, 4 passed, 1 failed")
+    assert String.contains?(output, "Randomized with seed 12345")
+  end
+
+  test ":suite_finished prints a report (Elixir >=1.12)" do
+    config = %{
+      colorize: false,
+      test_count: 5,
+      seed: "12345",
+      state_counter: %{
+        passed: 4,
+        failed: 1
+      },
+      tag_counter: %{}
+    }
+
+    output = capture_io fn ->
+      time = 500000
+      {:noreply, _} = Tapex.handle_cast({:suite_finished, %{run: time, load: time, async: nil}}, config)
     end
 
     assert String.contains?(output, "1..5\n")
