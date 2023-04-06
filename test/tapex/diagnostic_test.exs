@@ -3,6 +3,10 @@ defmodule Tapex.DiagnosticTest do
 
   import Tapex.Diagnostic
 
+  def version do
+    Application.spec(:tapex, :vsn) |> Kernel.to_string()
+  end
+
   test "format_diagnostic for test without color" do
     trace = [{Tapex, :awesome, 1, [file: 'awesome.ex', line: 42]}]
     failure = %ExUnit.AssertionError{
@@ -20,9 +24,9 @@ defmodule Tapex.DiagnosticTest do
       "#       2) everything is awesome (nil)\n" <>
       "#          awesome.ex:12\n" <>
       "#          not awesome\n" <>
-      "#          code: Awesum!()\n" <>
+      "#          code: \"Awesum!()\"\n" <>
       "#          stacktrace:\n" <>
-      "#            (tapex) awesome.ex:42: Tapex.awesome/1"
+      "#            (tapex #{version()}) awesome.ex:42: Tapex.awesome/1"
 
     assert expected == actual
   end
@@ -37,10 +41,10 @@ defmodule Tapex.DiagnosticTest do
     actual = format_diagnostic(case, 5, true)
 
     expected =
-      "#       5) nil: failure on setup_all callback, test invalidated\n" <>
+      "#       5) nil: failure on setup_all callback, all tests have been invalidated\n" <>
       "#          \e[31m** (RuntimeError) BOOM!\e[0m\n" <>
       "#          \e[36mstacktrace:\e[0m\n" <>
-      "#            (tapex) my_module.ex:20: Tapex.my_method/1"
+      "#            (tapex #{version()}) my_module.ex:20: Tapex.my_method/1"
 
     assert expected == actual
   end
