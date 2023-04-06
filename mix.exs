@@ -5,7 +5,7 @@ defmodule Tapex.Mixfile do
     [app: :tapex,
      deps: deps(),
      description: description(),
-     elixir: "~> 1.2",
+     elixir: "~> 1.4",
      package: package(),
      version: "0.1.1"]
   end
