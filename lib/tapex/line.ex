@@ -57,6 +57,9 @@ defmodule Tapex.Line do
     "# " <> color_wrap("TODO", :blue, colorize) |> spacecat(message)
   end
 
+  defp get_directive(%{state: {:excluded, reason}}) when is_binary(reason) do
+    {:skip, reason}
+  end
   defp get_directive(%{tags: %{skip: true}}) do
     {:skip, nil}
   end
@@ -80,6 +83,7 @@ defmodule Tapex.Line do
     case state do
       nil -> true
       {:skip, _} -> true
+      {:excluded, _} -> true
       _ -> false
     end
   end
