@@ -36,6 +36,18 @@ defmodule Tapex.LineTest do
     assert result == "ok       5 is unspecific (ATest) # SKIP"
   end
 
+  test "format_line with exclude" do
+    test = %{
+      case: "ATest",
+      name: "is unspecific",
+      state: {:excluded, "due to integration filter"},
+      tags: %{}
+    }
+
+    result = format_line(test, 5, false)
+    assert result == "ok       5 is unspecific (ATest) # SKIP due to integration filter"
+  end
+
   test "format_line with todo and message" do
     test = %{
       state: nil,
